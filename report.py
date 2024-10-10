@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     all_xpu_keys = ipex_keys | xpu_keys | onednn_keys
 
-    with open('README.md', 'w') as f:
+    with open('README.txt', 'w') as f:
         print('Number of cuda operators:', len(cuda_keys), file=f)
         print('Number of ipex operators:', len(ipex_keys), file=f)
         print('Number of xpu-ops operators:', len(xpu_keys), file=f)
