@@ -1,4 +1,5 @@
 import re
+import os
 import glob
 import yaml
 import sys
@@ -25,19 +26,27 @@ onednn_keys = [
 onednn_keys = set(onednn_keys)
 
 
-def parse_keys(folder, backend):
-    files = glob.glob(f'{folder}/**/Register{backend}.cpp', recursive=True)
-    register_xxx_file = files[0]
+def parse_keys(folder, backend, filename=None, startswith='m.impl("', pattern=r'm\.impl\("([^"]+)"', check=True):
+    if filename is None:
+        files = glob.glob(f'{folder}/**/Register{backend}.cpp', recursive=True)
+        register_xxx_file = files[0]
+    else:
+        register_xxx_file = os.path.join(folder, filename)
     print(register_xxx_file)
     with open(register_xxx_file, 'r') as f:
         lines = f.readlines()
-    lines = [l.strip() for l in lines if l.strip().startswith('m.impl("')]
-    pattern = r'm\.impl\("([^"]+)"'
+    if startswith is not None:
+        lines = [l.strip() for l in lines if l.strip().startswith(startswith)]
+    else:
+        lines = [l.strip() for l in lines]
+    # pattern = r'm\.impl\("([^"]+)"'
     keys = []
     for line in lines:
         match = re.search(pattern, line)
-        keys.append(match.group(1))
-    assert len(lines) == len(keys)
+        if match is not None:
+            keys.append(match.group(1))
+    if check:
+        assert len(lines) == len(keys)
     keys = set(keys)
     return keys
 
@@ -45,26 +54,43 @@ def parse_keys(folder, backend):
 if __name__ == '__main__':
     root_folder = sys.argv[1].strip()
     cuda_keys = parse_keys(root_folder + '/build', 'CUDA')
+    sparse_cuda_keys = parse_keys(root_folder + '/build', 'SparseCUDA')
+    sparse_csr_cuda_keys = parse_keys(root_folder + '/build', 'SparseCsrCUDA')
+    num_of_all_cuda_keys = len(cuda_keys) + len(sparse_cuda_keys) + len(sparse_csr_cuda_keys)
+
     xpu_keys = parse_keys(root_folder + '/build/xpu', 'XPU')
+    xpu_keys = xpu_keys & cuda_keys
+    sparse_xpu_keys = parse_keys(root_folder, None, 
+        'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    sparse_csr_xpu_keys = parse_keys(root_folder, None, 
+        'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    num_of_all_xpu_keys = len(xpu_keys) + len(sparse_xpu_keys) + len(sparse_csr_xpu_keys)
+    num_of_all_xpu_keys_w_onednn = num_of_all_xpu_keys + len(onednn_keys)
+
     with open('ipex_functions.yaml', 'r', encoding='utf-8') as file:
         data = yaml.safe_load(file)
         data = data['supported']
     ipex_keys = set(data)
-
-    all_xpu_keys = ipex_keys | xpu_keys | onednn_keys
-    all_xpu_keys_in_cuda = all_xpu_keys & cuda_keys
-    xpu_onednn_keys = xpu_keys | onednn_keys
-    xpu_onednn_keys_in_cuda = xpu_onednn_keys & cuda_keys
+    ipex_keys = ipex_keys & cuda_keys
 
     with open('README.txt', 'w') as f:
         print('Description:\nThis is a temporary project for automating the progress report of torch-xpu-ops repo [https://github.com/intel/torch-xpu-ops].', file=f)
         print('Using command `python report.py $FOLDER_TO_PYTORCH` will generate report file named README.txt\n', file=f)
 
-        print('Number of cuda operators (with cudnn):', len(cuda_keys), file=f)
-        print('Number of ipex operators (with onednn):', len(ipex_keys), file=f)
-        print('Number of xpu-ops operators (without onednn):', len(xpu_keys), file=f)
-        print('Number of onednn operators:', len(onednn_keys), file=f)
-        print('Total number of operators for xpu-ops+ipex+onednn (do intersection with cuda):', len(all_xpu_keys_in_cuda), file=f)
+        print('Number of cuda-backend operators (with cudnn):', len(cuda_keys), file=f)
+        print('Number of sparse_cuda-backend operators:', len(sparse_cuda_keys), file=f)
+        print('Number of sparse_csr_cuda-backend operators:', len(sparse_csr_cuda_keys), file=f)
+        print('Total Number of cuda operators:', num_of_all_cuda_keys, file=f)
         print('', file=f)
 
-        print('Ratio: xpu-ops+onednn / cuda:', len(xpu_onednn_keys_in_cuda) / len(cuda_keys), file=f)
+        print('Number of xpu-backend operators (without onednn):', len(xpu_keys), file=f)
+        print('Number of sparse_xpu-backend operators:', len(sparse_xpu_keys), file=f)
+        print('Number of sparse_csr_xpu-backend operators:', len(sparse_csr_xpu_keys), file=f)
+        print('Number of onednn operators:', len(onednn_keys), file=f)
+        print('Total Number of xpu operators:', num_of_all_xpu_keys_w_onednn, file=f)
+        print('', file=f)
+
+        print('Number of ipex operators (with onednn):', len(ipex_keys), file=f)
+        print('', file=f)
+
+        print('Ratio: xpu-ops (with onednn) / cuda:', num_of_all_xpu_keys_w_onednn / num_of_all_cuda_keys, file=f)
