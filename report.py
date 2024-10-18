@@ -96,3 +96,22 @@ if __name__ == '__main__':
         print('', file=f)
 
         print('Ratio: xpu-ops (with onednn) / cuda:', num_of_all_xpu_keys_w_onednn / num_of_all_cuda_keys, file=f)
+    
+    sparse_cuda_keys = set(['sparse:'+item for item in sparse_cuda_keys])
+    sparse_xpu_keys = set(['sparse:'+item for item in sparse_xpu_keys])
+    all_cuda_keys = cuda_keys | sparse_cuda_keys
+    all_xpu_keys = xpu_keys | sparse_xpu_keys | onednn_keys
+
+    all_list = []
+    for key in all_cuda_keys:
+        if key in all_xpu_keys:
+            all_list.append([key, 'y'])
+        else:
+            all_list.append([key, 'n'])
+    # print(all_list)
+    all_list = sorted(all_list)
+    all_list.insert(0, ['op', 'xpu-ready'])
+    import csv
+    with open('output.csv', mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerows(all_list)
