@@ -6,6 +6,8 @@ import sys
 
 
 onednn_keys = [
+    'addmm',
+    'addmm_',
     'addmm.out',
     '_addmm_activation.out',
     'mm.out',
@@ -18,6 +20,8 @@ onednn_keys = [
     'addbmm',
     'bmm.out',
     'bmm',
+    'addmv',
+    'addmv_',
     'addmv.out',
     'tensordot.out',
     'convolution_overrideable',
