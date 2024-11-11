@@ -65,8 +65,9 @@ if __name__ == '__main__':
 
     xpu_keys = parse_keys(root_folder + '/build/xpu', 'XPU')
     xpu_keys = xpu_keys & cuda_keys
-    sparse_xpu_keys = parse_keys(root_folder, None, 
-        'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    # sparse_xpu_keys = parse_keys(root_folder, None, 
+    #     'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    sparse_xpu_keys = parse_keys(root_folder + '/build/xpu', 'SparseXPU')
     # sparse_csr_xpu_keys = parse_keys(root_folder, None, 
     #     'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
     sparse_csr_xpu_keys = set()
