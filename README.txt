@@ -7,10 +7,10 @@ Number of sparse_cuda-backend operators: 171
 Total Number of cuda operators: 1396
 
 Number of xpu-backend operators (without onednn): 1026
-Number of sparse_xpu-backend operators: 114
+Number of sparse_xpu-backend operators: 149
 Number of onednn operators: 20
-Total Number of xpu operators: 1160
+Total Number of xpu operators: 1195
 
 Number of ipex operators (with onednn): 815
 
-Ratio: xpu-ops (with onednn) / cuda: 0.830945558739255
+Ratio: xpu-ops (with onednn) / cuda: 0.8560171919770774
