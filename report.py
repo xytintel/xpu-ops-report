@@ -9,6 +9,7 @@ onednn_keys = [
     'addmm',
     'addmm_',
     'addmm.out',
+    '_addmm_activation',
     '_addmm_activation.out',
     'mm.out',
     'mm',
