@@ -3,6 +3,7 @@ import os
 import glob
 import yaml
 import sys
+from addict import Dict
 
 
 onednn_keys = [
@@ -58,66 +59,35 @@ def parse_keys(folder, backend, filename=None, startswith='m.impl("', pattern=r'
 
 if __name__ == '__main__':
     root_folder = sys.argv[1].strip()
-    cuda_keys = parse_keys(root_folder + '/build', 'CUDA')
-    sparse_cuda_keys = parse_keys(root_folder + '/build', 'SparseCUDA')
-    # sparse_csr_cuda_keys = parse_keys(root_folder + '/build', 'SparseCsrCUDA')
-    sparse_csr_cuda_keys = set()
-    num_of_all_cuda_keys = len(cuda_keys) + len(sparse_cuda_keys) + len(sparse_csr_cuda_keys)
+    kcuda = Dict()
+    kxpu = Dict()
+
+    kcuda.basic_keys = parse_keys(root_folder + '/build', 'CUDA')
+    kcuda.sparse_keys = parse_keys(root_folder + '/build', 'SparseCUDA')
+    kcuda.sparse_csr_keys = parse_keys(root_folder + '/build', 'SparseCsrCUDA')
+    kcuda.nested_tensor_keys = parse_keys(root_folder + '/build', 'NestedTensorCUDA')
 
     xpu_keys = parse_keys(root_folder + '/build/xpu', 'XPU')
-    xpu_keys = xpu_keys & cuda_keys
-    # sparse_xpu_keys = parse_keys(root_folder, None, 
-    #     'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
-    sparse_xpu_keys = parse_keys(root_folder + '/build/xpu', 'SparseXPU')
-    # sparse_csr_xpu_keys = parse_keys(root_folder, None, 
-    #     'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
-    sparse_csr_xpu_keys = set()
-    num_of_all_xpu_keys = len(xpu_keys) + len(sparse_xpu_keys) + len(sparse_csr_xpu_keys)
-    num_of_all_xpu_keys_w_onednn = num_of_all_xpu_keys + len(onednn_keys)
+    kxpu.basic_keys = (xpu_keys | onednn_keys) & kcuda.basic_keys
+    kxpu.sparse_keys = parse_keys(root_folder + '/build/xpu', 'SparseXPU')
+    kxpu.sparse_csr_keys = parse_keys(root_folder, None, 
+        'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    kxpu.nested_tensor_keys = parse_keys(root_folder + '/build/xpu', 'NestedTensorXPU')
 
-    with open('ipex_functions.yaml', 'r', encoding='utf-8') as file:
-        data = yaml.safe_load(file)
-        data = data['supported']
-    ipex_keys = set(data)
-    ipex_keys = ipex_keys & cuda_keys
-
-    with open('README.txt', 'w') as f:
-        print('Description:\nThis is a temporary project for automating the progress report of torch-xpu-ops repo [https://github.com/intel/torch-xpu-ops].', file=f)
-        print('Using command `python report.py $FOLDER_TO_PYTORCH` will generate report file named README.txt\n', file=f)
-
-        print('Number of cuda-backend operators (with cudnn):', len(cuda_keys), file=f)
-        print('Number of sparse_cuda-backend operators:', len(sparse_cuda_keys), file=f)
-        # print('Number of sparse_csr_cuda-backend operators:', len(sparse_csr_cuda_keys), file=f)
-        print('Total Number of cuda operators:', num_of_all_cuda_keys, file=f)
-        print('', file=f)
-
-        print('Number of xpu-backend operators (without onednn):', len(xpu_keys), file=f)
-        print('Number of sparse_xpu-backend operators:', len(sparse_xpu_keys), file=f)
-        # print('Number of sparse_csr_xpu-backend operators:', len(sparse_csr_xpu_keys), file=f)
-        print('Number of onednn operators:', len(onednn_keys), file=f)
-        print('Total Number of xpu operators:', num_of_all_xpu_keys_w_onednn, file=f)
-        print('', file=f)
-
-        print('Number of ipex operators (with onednn):', len(ipex_keys), file=f)
-        print('', file=f)
-
-        print('Ratio: xpu-ops (with onednn) / cuda:', num_of_all_xpu_keys_w_onednn / num_of_all_cuda_keys, file=f)
+    print('============ CUDA ============')
+    for key in kcuda.keys():
+        print(f"{key}: {len(kcuda[key])}")
+    print('============ XPU ============')
+    for key in kxpu.keys():
+        print(f"{key}: {len(kxpu[key])}")
     
-    sparse_cuda_keys = set(['sparse:'+item for item in sparse_cuda_keys])
-    sparse_xpu_keys = set(['sparse:'+item for item in sparse_xpu_keys])
-    all_cuda_keys = cuda_keys | sparse_cuda_keys
-    all_xpu_keys = xpu_keys | sparse_xpu_keys | onednn_keys
-
-    all_list = []
-    for key in all_cuda_keys:
-        if key in all_xpu_keys:
-            all_list.append([key, 'y'])
-        else:
-            all_list.append([key, 'n'])
-    # print(all_list)
-    all_list = sorted(all_list)
-    all_list.insert(0, ['op', 'xpu-ready'])
-    import csv
-    with open('output.csv', mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerows(all_list)
+    kcuda_kxpu = Dict()
+    for cudakeys in kcuda.keys():
+        kcuda_kxpu[cudakeys] = kcuda[cudakeys] - kxpu[cudakeys]
+    print(' ')
+    
+    for key in kcuda_kxpu.keys():
+        print(f"============ {key} ============")
+        values = sorted(kcuda_kxpu[key])
+        for v in values:
+            print(v)
