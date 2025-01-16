@@ -34,7 +34,7 @@ onednn_keys = set(onednn_keys)
 
 def parse_keys(folder, backend, filename=None, startswith='m.impl("', pattern=r'm\.impl\("([^"]+)"', check=True):
     if filename is None:
-        files = glob.glob(f'{folder}/**/Register{backend}.cpp', recursive=True)
+        files = glob.glob(f'{folder}/**/Register{backend}_0.cpp', recursive=True)
         register_xxx_file = files[0]
     else:
         register_xxx_file = os.path.join(folder, filename)
