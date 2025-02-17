@@ -70,8 +70,7 @@ if __name__ == '__main__':
     xpu_keys = parse_keys(root_folder + '/build/xpu', 'XPU')
     kxpu.basic_keys = (xpu_keys | onednn_keys) & kcuda.basic_keys
     kxpu.sparse_keys = parse_keys(root_folder + '/build/xpu', 'SparseXPU')
-    kxpu.sparse_csr_keys = parse_keys(root_folder, None, 
-        'third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp', startswith=None, pattern=r'TORCH_SELECTIVE_NAME\("([^"]+)"\)', check=False)
+    kxpu.sparse_csr_keys = parse_keys(root_folder + '/build/xpu', 'SparseCsrXPU')
     kxpu.nested_tensor_keys = parse_keys(root_folder + '/build/xpu', 'NestedTensorXPU')
 
     print('============ CUDA ============')
