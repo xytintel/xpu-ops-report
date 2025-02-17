@@ -4,27 +4,23 @@
 ../pytorch//build/aten/src/ATen/RegisterNestedTensorCUDA_0.cpp
 ../pytorch//build/xpu/ATen/RegisterXPU_0.cpp
 ../pytorch//build/xpu/ATen/RegisterSparseXPU_0.cpp
-../pytorch/third_party/torch-xpu-ops/src/ATen/native/sparse/SparseCsrTensor.cpp
+../pytorch//build/xpu/ATen/RegisterSparseCsrXPU_0.cpp
 ../pytorch//build/xpu/ATen/RegisterNestedTensorXPU_0.cpp
 ============ CUDA ============
 basic_keys: 1231
 sparse_keys: 171
 sparse_csr_keys: 139
-nested_tensor_keys: 98
+nested_tensor_keys: 99
 ============ XPU ============
-basic_keys: 1088
-sparse_keys: 151
-sparse_csr_keys: 1
-nested_tensor_keys: 88
+basic_keys: 1099
+sparse_keys: 160
+sparse_csr_keys: 125
+nested_tensor_keys: 93
  
 ============ basic_keys ============
 _cholesky_solve_helper
 _conv_depthwise2d
 _conv_depthwise2d.out
-_convert_indices_from_coo_to_csr
-_convert_indices_from_coo_to_csr.out
-_convert_indices_from_csr_to_coo
-_convert_indices_from_csr_to_coo.out
 _cslt_compress
 _cslt_sparse_mm
 _cslt_sparse_mm_search
@@ -36,8 +32,6 @@ _cudnn_rnn_backward
 _cudnn_rnn_flatten_weight
 _efficient_attention_backward
 _efficient_attention_forward
-_fft_c2c
-_fft_c2c.out
 _fft_c2r
 _fft_c2r.out
 _fft_r2c
@@ -80,12 +74,7 @@ _sparse_semi_structured_apply_dense
 _sparse_semi_structured_linear
 _sparse_semi_structured_mm
 _sparse_semi_structured_tile
-_to_sparse_bsc
-_to_sparse_bsr
-_to_sparse_csc
-_to_sparse_csr
 _to_sparse_semi_structured
-_transformer_encoder_layer_fwd
 _triton_multi_head_attention
 _triton_scaled_dot_attention
 _use_cudnn_ctc_loss
@@ -162,16 +151,7 @@ triangular_solve
 triangular_solve.X
 vdot
 ============ sparse_keys ============
-_sparse_log_softmax
-_sparse_log_softmax_backward_data
-_sparse_softmax
-_sparse_softmax_backward_data
 _sparse_sparse_matmul
-_sparse_sum_backward
-_to_sparse_bsc
-_to_sparse_bsr
-_to_sparse_csc
-_to_sparse_csr
 addmm
 addmm.out
 addmm_
@@ -183,153 +163,24 @@ mm
 mm.out
 sspaddmm.out
 ============ sparse_csr_keys ============
-_conj_physical
-_nnz
-_sparse_csr_prod.dim_dtype
-_sparse_csr_sum.dim_dtype
 _spsolve
-_to_dense
-_to_sparse
-_to_sparse.sparse_dim
-_to_sparse_bsc
-_to_sparse_bsr
-_to_sparse_csc
-_to_sparse_csr
-abs
-abs.out
-abs_
-add.Tensor
 add.out
-add_.Tensor
 addmm
 addmm.out
 addmv.out
-angle
-angle.out
-asin
-asin.out
-asin_
-asinh
-asinh.out
-asinh_
-atan
-atan.out
-atan_
-atanh
-atanh.out
-atanh_
 baddbmm.out
 bmm.out
-ccol_indices
-ceil
-ceil.out
-ceil_
-clone
-col_indices
-conj_physical.out
-conj_physical_
-copy_
-crow_indices
-deg2rad
-deg2rad.out
-deg2rad_
-dense_dim
-empty.memory_format
-empty_like
-erf
-erf.out
-erf_
-erfinv
-erfinv.out
-erfinv_
-expm1
-expm1.out
-expm1_
-fill_.Scalar
-floor
-floor.out
-floor_
-frac
-frac.out
-frac_
-isinf
-isnan
-isneginf
-isneginf.out
-isposinf
-isposinf.out
-log1p
-log1p.out
-log1p_
 mm
 mm.out
-mul.Scalar
-mul.Tensor
-mul.out
-mul_.Scalar
-mul_.Tensor
-neg
-neg.out
-neg_
-normal_
-rad2deg
-rad2deg.out
-rad2deg_
-relu
-relu_
-resize_
-resize_as_sparse_
-round
-round.out
-round_
-row_indices
 select.int
 select_copy.int
-sgn
-sgn.out
-sgn_
-sign
-sign.out
-sign_
-signbit
-signbit.out
-sin
-sin.out
-sin_
-sinh
-sinh.out
-sinh_
-sparse_dim
-sparse_mask
 sparse_sampled_addmm
 sparse_sampled_addmm.out
-sqrt
-sqrt.out
-sqrt_
-sum
-sum.dim_IntList
-tan
-tan.out
-tan_
-tanh
-tanh.out
-tanh_
-threshold_backward
-threshold_backward.grad_input
 triangular_solve.X
-trunc
-trunc.out
-trunc_
-values
-zero_
 ============ nested_tensor_keys ============
 _fused_sdp_choice
-_nested_tensor_softmax_with_shape
 _scaled_dot_product_efficient_attention
 _scaled_dot_product_flash_attention
 _scaled_dot_product_flash_attention_backward
-_test_autograd_multiple_dispatch.fullcoverage
-_test_autograd_multiple_dispatch.ntonly
-_transformer_encoder_layer_fwd
 bmm
-to_padded_tensor
+value_selecting_reduction_backward
