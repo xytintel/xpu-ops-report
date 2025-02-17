@@ -14,7 +14,7 @@ nested_tensor_keys: 99
 ============ XPU ============
 basic_keys: 1099
 sparse_keys: 160
-sparse_csr_keys: 125
+sparse_csr_keys: 127
 nested_tensor_keys: 93
  
 ============ basic_keys ============
@@ -172,8 +172,6 @@ baddbmm.out
 bmm.out
 mm
 mm.out
-select.int
-select_copy.int
 sparse_sampled_addmm
 sparse_sampled_addmm.out
 triangular_solve.X
