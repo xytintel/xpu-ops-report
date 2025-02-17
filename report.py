@@ -63,6 +63,7 @@ if __name__ == '__main__':
     kxpu = Dict()
 
     kcuda.basic_keys = parse_keys(root_folder + '/build', 'CUDA')
+    kcuda.basic_keys = {item for item in kcuda.basic_keys if 'cudnn' not in item}
     kcuda.sparse_keys = parse_keys(root_folder + '/build', 'SparseCUDA')
     kcuda.sparse_csr_keys = parse_keys(root_folder + '/build', 'SparseCsrCUDA')
     kcuda.nested_tensor_keys = parse_keys(root_folder + '/build', 'NestedTensorCUDA')
