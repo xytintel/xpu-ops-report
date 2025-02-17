@@ -7,7 +7,7 @@
 ../pytorch//build/xpu/ATen/RegisterSparseCsrXPU_0.cpp
 ../pytorch//build/xpu/ATen/RegisterNestedTensorXPU_0.cpp
 ============ CUDA ============
-basic_keys: 1231
+basic_keys: 1210
 sparse_keys: 171
 sparse_csr_keys: 139
 nested_tensor_keys: 99
@@ -24,12 +24,6 @@ _conv_depthwise2d.out
 _cslt_compress
 _cslt_sparse_mm
 _cslt_sparse_mm_search
-_cudnn_ctc_loss
-_cudnn_ctc_loss.Tensor
-_cudnn_init_dropout_state
-_cudnn_rnn
-_cudnn_rnn_backward
-_cudnn_rnn_flatten_weight
 _efficient_attention_backward
 _efficient_attention_forward
 _fft_c2r
@@ -56,8 +50,6 @@ _linalg_svd
 _linalg_svd.U
 _mixed_dtypes_linear
 _padded_dense_to_jagged_forward
-_scaled_dot_product_cudnn_attention
-_scaled_dot_product_cudnn_attention_backward
 _scaled_dot_product_efficient_attention
 _scaled_dot_product_efficient_attention_backward
 _scaled_dot_product_flash_attention
@@ -77,8 +69,6 @@ _sparse_semi_structured_tile
 _to_sparse_semi_structured
 _triton_multi_head_attention
 _triton_scaled_dot_attention
-_use_cudnn_ctc_loss
-_use_cudnn_ctc_loss.Tensor
 _validate_compressed_sparse_indices
 cholesky
 cholesky.out
@@ -86,17 +76,6 @@ cholesky_inverse
 cholesky_inverse.out
 conv_depthwise3d
 convolution_backward
-cudnn_affine_grid_generator
-cudnn_affine_grid_generator_backward
-cudnn_batch_norm
-cudnn_batch_norm_backward
-cudnn_convolution
-cudnn_convolution.out
-cudnn_convolution_add_relu
-cudnn_convolution_relu
-cudnn_convolution_transpose
-cudnn_grid_sampler
-cudnn_grid_sampler_backward
 dot
 geqrf
 geqrf.a
